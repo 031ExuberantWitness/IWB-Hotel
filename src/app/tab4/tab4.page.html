@@ -1,0 +1,174 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title> Nueva habitación </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="eventoForm">
+    <ion-grid>
+      <ion-item-divider>
+        <ion-label>
+          Habitación
+        </ion-label>
+      </ion-item-divider>
+
+      <ion-row>
+        <ion-col size="2">
+          <ion-item>
+            <ion-icon name="ellipsis-vertical-outline" slot="start"></ion-icon>
+            <ion-input label="Nombre" labelPlacement="floating" type="text" formControlName="cliente"></ion-input>
+          </ion-item> 
+
+        </ion-col>
+        <ion-col size="10">
+        </ion-col>
+      </ion-row>
+
+      <ion-item-divider>
+        <ion-label>
+          Información basica (Nombre y numero telefonico)
+        </ion-label>
+      </ion-item-divider>
+      <ion-row>
+        <ion-col size="2">
+          <ion-item>
+            <ion-icon name="person" slot="start"></ion-icon>
+            <ion-input label="Nombre" labelPlacement="floating" type="text" formControlName="cliente"></ion-input>
+          </ion-item>
+
+        </ion-col>
+        <ion-col size="10">
+          <ion-item>
+            <ion-icon name="call" slot="start"></ion-icon>
+            <ion-input label="Telefono" labelPlacement="floating" type="tel" formControlName="celular"></ion-input>
+          </ion-item>
+
+        </ion-col>
+      </ion-row>
+
+      <ion-item-divider>
+        <ion-label>
+          Descripción de la habitación
+        </ion-label>
+      </ion-item-divider>
+      <ion-row>
+        <ion-col size="12">
+          <ion-item>
+            <ion-textarea label="Descripción" labelPlacement="floating" formControlName="descripcion"></ion-textarea>
+          </ion-item>
+
+        </ion-col>
+      </ion-row> 
+
+      <ion-item-divider>
+        <ion-label>
+          Servicios incluidos con la habitación
+        </ion-label>
+      </ion-item-divider>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="3">
+          <ion-item>
+            <ion-icon name="beer-outline" slot="start"></ion-icon>
+            <ion-label>
+              Frigobar
+            </ion-label>
+            <ion-toggle formControlName="frigobar">
+              Mesa de regalos
+            </ion-toggle>
+          </ion-item>
+        </ion-col>
+
+        <ion-col size="3">
+          <ion-item>
+            <ion-icon name="bag-handle-outline" slot="start"></ion-icon>
+            <ion-label>
+              Toallas extra
+            </ion-label>
+            <ion-toggle formControlName="towelExtra">
+              Mesa de regalos
+            </ion-toggle>
+          </ion-item> 
+        </ion-col>
+
+        <ion-col size="3">
+          <ion-item>
+            <ion-icon name="bed-outline" slot="start"></ion-icon>
+            <ion-select interface="popover" placeholder="Tipo de cama" label="Tipo de evento" labelPlacement="floating"
+              formControlName="bedType">
+              <ion-select-option value="Matrimonial">
+                Matrimonial
+              </ion-select-option>
+              <ion-select-option value="Individual4">
+                Individual
+              </ion-select-option>
+              <ion-select-option value="Otro">
+                Otro
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+
+        <ion-col size="3">
+          <ion-item>
+            <ion-icon name="fast-food-outline" slot="start"></ion-icon>
+            <ion-label>
+              Buffet
+            </ion-label>
+            <ion-toggle formControlName="buffet">
+              Mesa de regalos
+            </ion-toggle>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="6">
+          <ion-item>
+            <ion-icon name="person-add" slot="start"></ion-icon>
+            <ion-input label="Invitados" labelPlacement="floating" type="number" formControlName="personas" min="0"
+              max="1000"></ion-input>
+          </ion-item>
+          <ion-progress-bar [value]="eventoForm.controls.personas.value/1000"></ion-progress-bar>
+
+        </ion-col>
+        
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="stacked">Total a pagar</ion-label>
+            <ion-icon name="cash" slot="start"></ion-icon>
+            <ion-text color="success">
+              <p>{{eventoForm.controls.precio.value|currency}}</p>
+            </ion-text>
+          </ion-item>
+        </ion-col> 
+      </ion-row> 
+
+      <ion-row>
+        <ion-col size="6">
+          <ion-button expand="block" shape="round" [disabled]="!eventoForm.valid" (click)="apartar()">
+            <ion-icon name="calendar-number" slot="start"></ion-icon>
+            Limpiar formulario
+          </ion-button>
+        </ion-col>
+        <ion-col size="6">
+          <ion-button expand="block" shape="round" color="success" [disabled]="!eventoForm.valid" (click)="confirmar()">
+            <ion-icon name="card" slot="start"></ion-icon>
+            Confirmar
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+      <ion-row> 
+        <label>test</label>
+      </ion-row>
+      <ion-row> 
+        <label>test</label>
+      </ion-row>
+      <ion-row> 
+        <label>test</label>
+      </ion-row>
+
+    </ion-grid>
+  </form>
+</ion-content>
