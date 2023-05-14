@@ -11,9 +11,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { IonDatetime, IonicModule, IonItem } from '@ionic/angular';
-import { EventoForm } from '../models/evento';
 import { EventoService } from '../services/evento.service';
 import { Title } from '@angular/platform-browser';
+import { ReservationForm, RoomInfo, RoomInfoForm } from '../models/reservation';
+import { ReservationService } from '../services/reservation.service';
 
 @Component({
   selector: 'app-tab2',
@@ -32,153 +33,70 @@ export class Tab2Page {
     brincolin: 1000,
     alberca: 5000,
   };
-  eventoForm: FormGroup<EventoForm>;
+  reservationForm: FormGroup<ReservationForm>;
   fechasOcupadas: string[] = [];
   mensajes_validacion: any;
-  constructor(private eventoService: EventoService, private title: Title) {
+  constructor(
+    private reservationService: ReservationService,
+    private title: Title
+  ) {
     this.title.setTitle('Nuevo evento');
-    this.eventoForm = new FormGroup({
-      fecha: new FormControl('', {
+    this.reservationForm = new FormGroup({
+      buffete: new FormControl(false, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      client: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      date: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, this.validarFecha()],
       }),
-      hora: new FormControl('', {
+      email: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required],
+        validators: [Validators.required, Validators.email],
       }),
-      cliente: new FormControl('', {
-        nonNullable: true,
-        validators: [Validators.required],
-      }),
-      celular: new FormControl('', {
+      phone: new FormControl('', {
         nonNullable: true,
         validators: [
           Validators.required,
           Validators.minLength(10),
           Validators.maxLength(10),
-          Validators.pattern(/^[0-9]{10}$/),
+          Validators.pattern('[0-9]*'),
         ],
       }),
-      tipo: new FormControl('', {
+      rooms: new FormControl<RoomInfo[]>([], {
         nonNullable: true,
         validators: [Validators.required],
       }),
-      descripcion: new FormControl('', {
+      paymentMethod: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required],
       }),
-      alberca: new FormControl(0, {
-        nonNullable: true,
-      }),
-      mesaRegalos: new FormControl(false, {
-        nonNullable: true,
-      }),
-      colorSobremantel: new FormControl<string[]>([], {
-        nonNullable: true,
-        validators: [Validators.required],
-      }),
-      personas: new FormControl(0, {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.min(1),
-          Validators.max(1000),
-        ],
-      }),
-      brincolin: new FormControl(false, {
-        nonNullable: true,
-      }),
-      precio: new FormControl(1000, {
-        nonNullable: true,
-        validators: [Validators.required],
-      }),
-      anticipo: new FormControl(0, {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.min(100),
-          Validators.max(1000),
-        ],
-      }),
-      metodo: new FormControl('Efectivo', {
-        nonNullable: true,
-        validators: [Validators.required],
-      }),
-      saldo: new FormControl(1000, {
-        nonNullable: true,
-        validators: [Validators.required],
-      }),
-    });
-    this.eventoForm.controls.anticipo.valueChanges.subscribe((value) => {
-      this.eventoForm.controls.saldo.patchValue(
-        this.eventoForm.controls.precio.value - value
-      );
-      this.actualizarValidacionesAnticipo();
-    });
-    this.eventoForm.controls.precio.valueChanges.subscribe((value) => {
-      this.eventoForm.controls.saldo.patchValue(
-        value - this.eventoForm.controls.anticipo.value
-      );
-      this.actualizarValidacionesAnticipo();
-    });
-    this.eventoService
-      .getEventos()
-      .forEach((evento) => this.fechasOcupadas.push(evento.fecha));
-    this.eventoForm.controls.colorSobremantel.valueChanges.subscribe(() => {
-      this.eventoForm.controls.precio.patchValue(this.calcularPrecio());
-    });
-    this.eventoForm.controls.mesaRegalos.valueChanges.subscribe(() => {
-      this.eventoForm.controls.precio.patchValue(this.calcularPrecio());
-    });
-    this.eventoForm.controls.brincolin.valueChanges.subscribe(() => {
-      this.eventoForm.controls.precio.patchValue(this.calcularPrecio());
-    });
-    this.eventoForm.controls.alberca.valueChanges.subscribe(() => {
-      this.eventoForm.controls.precio.patchValue(this.calcularPrecio());
     });
     this.mensajes_validacion = {
-      fecha: [
-        { tipo: 'required', mensaje: 'La fecha ya está ocupada' },
-        { tipo: 'fechaOcupada', mensaje: 'La fecha ya está ocupada' },
+      buffete: [{ type: 'required', message: 'Este campo es obligatorio.' }],
+      client: [{ type: 'required', message: 'Este campo es obligatorio.' }],
+      date: [
+        { type: 'required', message: 'Este campo es obligatorio.' },
+        { type: 'fechaOcupada', message: 'Esta fecha ya está ocupada.' },
       ],
-      hora: [{ tipo: 'required', mensaje: 'La hora es obligatoria' }],
-      cliente: [
-        { tipo: 'required', mensaje: 'El nombre del cliente es obligatorio' },
+      email: [
+        { type: 'required', message: 'Este campo es obligatorio.' },
+        { type: 'email', message: 'El correo no es válido.' },
       ],
-      celular: [
-        { tipo: 'required', mensaje: 'El celular es obligatorio' },
-        { tipo: 'minlength', mensaje: 'El celular debe tener 10 dígitos' },
-        { tipo: 'maxlength', mensaje: 'El celular debe tener 10 dígitos' },
-        { tipo: 'pattern', mensaje: 'El celular debe tener solo dígitos' },
+      phone: [
+        { type: 'required', message: 'Este campo es obligatorio.' },
+        { type: 'minlength', message: 'El teléfono debe tener 10 dígitos.' },
+        { type: 'maxlength', message: 'El teléfono debe tener 10 dígitos.' },
+        { type: 'pattern', message: 'El teléfono debe ser numérico.' },
       ],
-      tipo: [{ tipo: 'required', mensaje: 'El tipo de evento es obligatorio' }],
-      descripcion: [
-        { tipo: 'required', mensaje: 'La descripción es obligatoria' },
+      rooms: [{ type: 'required', message: 'Este campo es obligatorio.' }],
+      paymentMethod: [
+        { type: 'required', message: 'Este campo es obligatorio.' },
       ],
-      colorSobremantel: [
-        {
-          tipo: 'required',
-          mensaje: 'El color del sobremantel es obligatorio',
-        },
-      ],
-      personas: [
-        { tipo: 'required', mensaje: 'El número de personas es obligatorio' },
-        { tipo: 'min', mensaje: 'El número de personas debe ser mayor a 0' },
-        { tipo: 'max', mensaje: 'La capacidad maxima es de 1000 personas' },
-      ],
-      anticipo: [
-        { tipo: 'required', mensaje: 'El anticipo es obligatorio' },
-        {
-          tipo: 'min',
-          mensaje: 'El anticipo debe ser por lo menos el 10%',
-        },
-        {
-          tipo: 'max',
-          mensaje: 'El anticipo no puede ser superior al total a pagar',
-        },
-      ],
-      metodo: [{ tipo: 'required', mensaje: 'Se requiere un método de pago' }],
-      saldo: [{ tipo: 'required', mensaje: 'El saldo es obligatorio' }],
     };
   }
 
@@ -216,88 +134,85 @@ export class Tab2Page {
     if (metodo === 'Efectivo') {
       if (this.efectivo.color === 'primary') {
         this.efectivo.color = undefined;
-        this.eventoForm.controls.metodo.patchValue('');
+        this.reservationForm.controls.paymentMethod.patchValue('');
         return;
       }
       this.efectivo.color = 'primary';
       this.tarjeta.color = undefined;
-      this.eventoForm.controls.metodo.patchValue('Efectivo');
+      this.reservationForm.controls.paymentMethod.patchValue('Efectivo');
     } else {
       if (this.tarjeta.color === 'primary') {
         this.tarjeta.color = undefined;
-        this.eventoForm.controls.metodo.patchValue('');
+        this.reservationForm.controls.paymentMethod.patchValue('');
         return;
       }
       this.efectivo.color = undefined;
       this.tarjeta.color = 'primary';
-      this.eventoForm.controls.metodo.patchValue('Transferencia');
+      this.reservationForm.controls.paymentMethod.patchValue('Transferencia');
     }
   }
 
   setFechaHora(event: any) {
     if (event instanceof Date) {
-      this.eventoForm.controls.fecha.patchValue(
+      this.reservationForm.controls.date.patchValue(
         event.toISOString().slice(0, 10)
-      );
-      this.eventoForm.controls.hora.patchValue(
-        event.toLocaleTimeString().slice(0, 5)
       );
     } else {
       const fecha = new Date(event.detail.value);
-      this.eventoForm.controls.fecha.patchValue(
+      this.reservationForm.controls.date.patchValue(
         fecha.toISOString().slice(0, 10)
-      );
-      this.eventoForm.controls.hora.patchValue(
-        fecha.toLocaleTimeString().slice(0, 5)
       );
     }
   }
 
   confirmar() {
-    this.eventoService.addEvento({
-      ...this.eventoForm.getRawValue(),
-      estado: 'Confirmado',
+    this.reservationService.addReservation({
+      ...this.reservationForm.getRawValue(),
     });
     this.fechasOcupadas.push(
-      new Date(this.eventoForm.controls.fecha.value).toISOString().slice(0, 10)
+      new Date(this.reservationForm.controls.date.value)
+        .toISOString()
+        .slice(0, 10)
     );
-    this.eventoForm.reset();
+    this.reservationForm.reset();
   }
 
   apartar() {
-    this.eventoService.addEvento({
-      ...this.eventoForm.getRawValue(),
-      estado: 'Apartado',
+    this.reservationService.addReservation({
+      ...this.reservationForm.getRawValue(),
     });
     this.fechasOcupadas.push(
-      new Date(this.eventoForm.controls.fecha.value).toISOString().slice(0, 10)
+      new Date(this.reservationForm.controls.date.value)
+        .toISOString()
+        .slice(0, 10)
     );
-    this.eventoForm.reset();
+    this.reservationForm.reset();
   }
 
   private calcularPrecio(): number {
     let precio = 1000;
     precio +=
       this.precios.sobremanteles *
-      this.eventoForm.controls.colorSobremantel.value.length;
-    precio += this.eventoForm.controls.mesaRegalos.value
+      this.reservationForm.controls.colorSobremantel.value.length;
+    precio += this.reservationForm.controls.mesaRegalos.value
       ? this.precios.mesaRegalos
       : 0;
-    precio += this.eventoForm.controls.brincolin.value
+    precio += this.reservationForm.controls.brincolin.value
       ? this.precios.brincolin
       : 0;
     precio +=
-      (this.precios.alberca * this.eventoForm.controls.alberca.value) / 100;
+      (this.precios.alberca * this.reservationForm.controls.alberca.value) /
+      100;
     return precio;
   }
 
   private actualizarValidacionesAnticipo() {
-    this.eventoForm.controls.anticipo.setValidators([
+    this.reservationForm.controls.anticipo.setValidators([
       Validators.required,
       Validators.min(this.calcularPrecio() * 0.1),
       Validators.max(this.calcularPrecio()),
     ]);
-    this.eventoForm.controls.anticipo.updateValueAndValidity({
+    this.reservationForm.controls.anticipo.updateValueAndValidity({
       emitEvent: false,
     });
   }

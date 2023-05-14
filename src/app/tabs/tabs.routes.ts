@@ -7,7 +7,7 @@ export const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'reservar_habitacion',
+        path: 'reservar',
         loadComponent: () =>
           import('../tab2/tab2.page').then((m) => m.Tab2Page),
       },

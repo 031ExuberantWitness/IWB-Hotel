@@ -20,7 +20,7 @@ export class EventoService {
         frigobar: true,
         toallasExtra: true,
         tipoCama: 'Matrimonial',
-        buffet: true,  
+        buffet: true,
         precio: 1000,
         anticipo: 500,
         metodo: 'Efectivo',

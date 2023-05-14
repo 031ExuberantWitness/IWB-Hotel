@@ -11,7 +11,7 @@ export interface Evento {
   frigobar: boolean;
   toallasExtra: boolean;
   tipoCama: string;
-  buffet: boolean; 
+  buffet: boolean;
   precio: number;
   anticipo: number;
   metodo: string;
@@ -30,10 +30,10 @@ export interface EventoForm {
   frigobar: FormControl<boolean>;
   toallasExtra: FormControl<boolean>;
   tipoCama: FormControl<string>;
-  buffet: FormControl<boolean>; 
+  buffet: FormControl<boolean>;
   precio: FormControl<number>;
   anticipo: FormControl<number>;
   metodo: FormControl<string>;
   saldo: FormControl<number>;
-  estado: FormControl<string>; 
+  estado: FormControl<string>;
 }
