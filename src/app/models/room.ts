@@ -5,15 +5,20 @@ export interface Room {
   roomNumber: string;
   capacity: number;
   type: string;
-  beds: string[];
+  beds: BedInfo[];
   frigobar: boolean;
   deleted?: boolean;
+}
+
+export interface BedInfo {
+  type: string;
+  quantity: number;
 }
 
 export interface RoomForm {
   roomNumber: FormControl<string>;
   capacity: FormControl<number>;
   type: FormControl<string>;
-  beds: FormControl<string[]>;
+  beds: FormControl<BedInfo[]>;
   frigobar: FormControl<boolean>;
 }

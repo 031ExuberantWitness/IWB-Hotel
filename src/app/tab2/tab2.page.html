@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <form [formGroup]="eventoForm">
+  <form [formGroup]="reservationForm">
     <ion-grid>
       <ion-item-divider>
         <ion-label> Habitación </ion-label>
@@ -18,7 +18,7 @@
             <ion-select
               interface="popover"
               placeholder="Habitaciones"
-              label="Tipo de evento"
+              label="Tipo de Habitación"
               labelPlacement="floating"
               formControlName="tipo"
             >
@@ -198,19 +198,12 @@
           </ion-item>
         </ion-col>
 
-        <ion-col size="4">
-          <ion-item class="ion-text-end" class="altura">
-            <ion-label>
-              <h1>Resto: {{eventoForm.controls.saldo.value| currency}}</h1>
-            </ion-label>
-          </ion-item>
-        </ion-col>
         <ion-col size="2">
           <ion-item>
             <ion-label position="stacked">Total a pagar</ion-label>
             <ion-icon name="cash" slot="start"></ion-icon>
             <ion-text color="success">
-              <p>{{eventoForm.controls.precio.value|currency}}</p>
+              <p>{{reservationForm.controls.total.value|currency}}</p>
             </ion-text>
           </ion-item>
         </ion-col>
@@ -232,7 +225,7 @@
           <ion-button
             expand="block"
             shape="round"
-            [disabled]="!eventoForm.valid"
+            [disabled]="!reservationForm.valid"
             (click)="apartar()"
           >
             <ion-icon name="calendar-number" slot="start"></ion-icon>
@@ -244,7 +237,7 @@
             expand="block"
             shape="round"
             color="success"
-            [disabled]="!eventoForm.valid"
+            [disabled]="!reservationForm.valid"
             (click)="confirmar()"
           >
             <ion-icon name="card" slot="start"></ion-icon>

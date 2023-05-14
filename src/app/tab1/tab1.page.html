@@ -10,10 +10,18 @@
       <ion-col size="3" *ngFor="let room of rooms">
         <ion-card>
           <ion-card-header>
-            <ion-card-title>{{ room.roomNumber }}</ion-card-title>
-            <ion-chip color="primary">
-              <ion-label>{{ room.type }}</ion-label>
-            </ion-chip>
+            <ion-grid>
+              <ion-row class="ion-justify-content-between ion-align-items-center">
+                <ion-col size="4">
+                  <ion-card-title>{{ room.roomNumber }}</ion-card-title>
+                </ion-col>
+                <ion-col size="4">
+                  <ion-chip color="primary">
+                    <ion-label>{{ room.type }}</ion-label>
+                  </ion-chip>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-card-header>
           <ion-card-content>
             <ion-item>
@@ -27,7 +35,9 @@
             </ion-item>
             <ion-item>
               <ion-icon name="bed-outline" slot="start"></ion-icon>
-              <ion-label *ngFor="let bed of room.beds">{{bed}}</ion-label>
+              <ion-label *ngFor="let bed of room.beds"
+                >{{bed.quantity}}x {{bed.type}}</ion-label
+              >
             </ion-item>
           </ion-card-content>
         </ion-card>

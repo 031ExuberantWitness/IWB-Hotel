@@ -10,6 +10,7 @@ export interface Reservation {
   rooms: RoomInfo[];
   deleted?: boolean;
   paymentMethod: string;
+  total: number;
 }
 
 export interface RoomInfo {
@@ -28,6 +29,7 @@ export interface ReservationForm {
   buffete: FormControl<boolean>;
   rooms: FormControl<RoomInfo[]>;
   paymentMethod: FormControl<string>;
+  total: FormControl<number>;
 }
 
 export interface RoomInfoForm {

@@ -15,6 +15,9 @@ import { EventoService } from '../services/evento.service';
 import { Title } from '@angular/platform-browser';
 import { ReservationForm, RoomInfo, RoomInfoForm } from '../models/reservation';
 import { ReservationService } from '../services/reservation.service';
+import { RoomTypesService } from '../services/room-types.service';
+import { RoomService } from '../services/room.service';
+import { Room } from '../models/room';
 
 @Component({
   selector: 'app-tab2',
@@ -24,20 +27,22 @@ import { ReservationService } from '../services/reservation.service';
   imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class Tab2Page {
-  @ViewChild('efectivo') efectivo!: IonItem;
-  @ViewChild('tarjeta') tarjeta!: IonItem;
-  @ViewChild('fecha') fecha!: IonDatetime;
-  private precios = {
-    sobremanteles: 200,
-    mesaRegalos: 500,
-    brincolin: 1000,
-    alberca: 5000,
-  };
+  @ViewChild('efectivo') cash!: IonItem;
+  @ViewChild('tarjeta') card!: IonItem;
+  @ViewChild('fecha') date!: IonDatetime;
+
+  rooms: Room[] = [];
+  private prices = { buffete: 1000, extraTowel: 100 };
+  private roomPrices = this.roomTypesService.getRoomPrices();
+
   reservationForm: FormGroup<ReservationForm>;
   fechasOcupadas: string[] = [];
   mensajes_validacion: any;
+
   constructor(
     private reservationService: ReservationService,
+    private roomTypesService: RoomTypesService,
+    private roomService: RoomService,
     private title: Title
   ) {
     this.title.setTitle('Nuevo evento');
@@ -75,6 +80,10 @@ export class Tab2Page {
         nonNullable: true,
         validators: [Validators.required],
       }),
+      total: new FormControl(0, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
     });
     this.mensajes_validacion = {
       buffete: [{ type: 'required', message: 'Este campo es obligatorio.' }],
@@ -100,8 +109,13 @@ export class Tab2Page {
     };
   }
 
+  private loadRooms() {
+    this.rooms = this.roomService.getRooms();
+  }
+
   ionViewDidEnter() {
-    if (this.fecha.value) return;
+    this.loadRooms();
+    if (this.date.value) return;
     const fecha = new Date();
     const formato = fecha
       .toLocaleDateString('es-MX', {
@@ -114,7 +128,7 @@ export class Tab2Page {
       .split('-')
       .reverse()
       .join('-');
-    this.fecha.value = `${formato}T${
+    this.date.value = `${formato}T${
       fecha.getHours() < 10 ? '0' + fecha.getHours() : fecha.getHours()
     }:${
       fecha.getMinutes() < 10 ? '0' + fecha.getMinutes() : fecha.getMinutes()
@@ -132,22 +146,22 @@ export class Tab2Page {
 
   elegirMetodo(metodo: string) {
     if (metodo === 'Efectivo') {
-      if (this.efectivo.color === 'primary') {
-        this.efectivo.color = undefined;
+      if (this.cash.color === 'primary') {
+        this.cash.color = undefined;
         this.reservationForm.controls.paymentMethod.patchValue('');
         return;
       }
-      this.efectivo.color = 'primary';
-      this.tarjeta.color = undefined;
+      this.cash.color = 'primary';
+      this.card.color = undefined;
       this.reservationForm.controls.paymentMethod.patchValue('Efectivo');
     } else {
-      if (this.tarjeta.color === 'primary') {
-        this.tarjeta.color = undefined;
+      if (this.card.color === 'primary') {
+        this.card.color = undefined;
         this.reservationForm.controls.paymentMethod.patchValue('');
         return;
       }
-      this.efectivo.color = undefined;
-      this.tarjeta.color = 'primary';
+      this.cash.color = undefined;
+      this.card.color = 'primary';
       this.reservationForm.controls.paymentMethod.patchValue('Transferencia');
     }
   }
@@ -189,32 +203,32 @@ export class Tab2Page {
     this.reservationForm.reset();
   }
 
-  private calcularPrecio(): number {
-    let precio = 1000;
-    precio +=
-      this.precios.sobremanteles *
-      this.reservationForm.controls.colorSobremantel.value.length;
-    precio += this.reservationForm.controls.mesaRegalos.value
-      ? this.precios.mesaRegalos
-      : 0;
-    precio += this.reservationForm.controls.brincolin.value
-      ? this.precios.brincolin
-      : 0;
-    precio +=
-      (this.precios.alberca * this.reservationForm.controls.alberca.value) /
-      100;
-    return precio;
+  private getRoomType(
+    roomInfo: RoomInfo
+  ): 'Sencilla' | 'Doble' | 'Suite' | 'Master Suite' {
+    const type = this.rooms.find(
+      (room) => room.roomNumber === roomInfo.roomNumber
+    )!.type;
+    switch (type) {
+      case 'Sencilla':
+        return 'Sencilla';
+      case 'Doble':
+        return 'Doble';
+      case 'Suite':
+        return 'Suite';
+      case 'Master Suite':
+        return 'Master Suite';
+      default:
+        return 'Sencilla';
+    }
   }
-
-  private actualizarValidacionesAnticipo() {
-    this.reservationForm.controls.anticipo.setValidators([
-      Validators.required,
-      Validators.min(this.calcularPrecio() * 0.1),
-      Validators.max(this.calcularPrecio()),
-    ]);
-    this.reservationForm.controls.anticipo.updateValueAndValidity({
-      emitEvent: false,
-    });
+  private calcularPrecio(roomInfo: RoomInfo): number {
+    let precio = this.roomPrices[this.getRoomType(roomInfo)];
+    precio += this.prices.extraTowel * roomInfo.extraTowels;
+    precio += this.reservationForm.controls.buffete.value
+      ? this.prices.buffete
+      : 0;
+    return precio;
   }
 
   public getFechasOcupadas() {

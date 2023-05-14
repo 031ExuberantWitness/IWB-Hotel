@@ -15,6 +15,8 @@ export class ReservationService {
         date: '2021-06-01',
         email: 'jujemataso@ittepic.edu.mx',
         phone: '341 123 4567',
+        paymentMethod: 'Efectivo',
+        total: 1000,
         rooms: [
           {
             id: '1',
