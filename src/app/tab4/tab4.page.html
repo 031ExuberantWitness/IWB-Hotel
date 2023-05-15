@@ -6,6 +6,100 @@
 
 <ion-content [fullscreen]="true">
   <form [formGroup]="roomForm">
-    
-  </form>
+    <ion-item-divider>
+      <ion-label> Información de la habitación </ion-label>
+    </ion-item-divider>
+
+    <ion-row>
+      <ion-col size="4">
+        <ion-item>
+          <ion-icon name="trail-sign-outline" slot="start"></ion-icon>
+          <ion-input label="Numero de la habitación" labelPlacement="floating" type="tel" formControlName="roomNumber"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="4">
+        <ion-item>
+          <ion-icon name="trail-sign-outline" slot="start"></ion-icon>
+          <ion-input label="Numero de la habitación" labelPlacement="floating" type="tel" formControlName="capacity"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="4">
+        <ion-item>
+          <ion-icon name="ellipsis-vertical-outline" slot="start"></ion-icon>
+          <ion-select interface="popover" placeholder="Habitaciones" label="Tipo de Habitación"
+            labelPlacement="floating" formControlName="type">
+            <ion-select-option value="Sencilla">
+              Sencilla
+            </ion-select-option>
+            <ion-select-option value="Doble">
+              Doble
+            </ion-select-option>
+            <ion-select-option value="Suite">
+              Suite
+            </ion-select-option>
+            <ion-select-option value="Master Suite">
+              Master Suite
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-item-divider>
+      <ion-label> Detalles de la habitación </ion-label>
+    </ion-item-divider>
+
+    <ion-row>
+      <ion-col size="4">
+        <ion-item>
+          <ion-icon name="bed-outline" slot="start"></ion-icon>
+          <ion-select interface="popover" placeholder="Tipo de cama" label="Tipo de cama" labelPlacement="floating"
+            formControlName="beds">
+            <ion-select-option value="Queen">
+              Queen
+            </ion-select-option>
+            <ion-select-option value="King">
+              King
+            </ion-select-option>
+            <ion-select-option value="Individual">
+              Individual
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col> 
+
+      <ion-col size="4">
+        <ion-item>
+          <ion-icon name="beer-outline" slot="start"></ion-icon>
+          <ion-label> Frigobar </ion-label>
+          <ion-toggle formControlName="frigobar">
+            Frigobar
+          </ion-toggle>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="4">
+        <ion-item>
+          <ion-icon name="eye-outline" slot="start"></ion-icon>
+          <ion-label> Habilitar </ion-label>
+          <ion-toggle formControlName="frigobar">
+            controlDetales
+          </ion-toggle>
+        </ion-item>
+      </ion-col> 
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12">
+        <ion-button expand="block" shape="round" color="success"
+          (click)="confirmar()">
+          <ion-icon name="card" slot="start"></ion-icon>
+          Registrar
+        </ion-button>
+      </ion-col>
+    </ion-row> 
+  
+</form>
 </ion-content>

@@ -30,7 +30,7 @@ export class Tab2Page {
   @ViewChild('efectivo') cash!: IonItem;
   @ViewChild('tarjeta') card!: IonItem;
   @ViewChild('fecha') date!: IonDatetime;
-
+ 
   rooms: Room[] = [];
   private prices = { buffete: 1000, extraTowel: 100 };
   private roomPrices = this.roomTypesService.getRoomPrices();
